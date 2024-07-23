@@ -265,6 +265,40 @@ if __name__ == "__main__": #main program
                 msg['From'] = email
                 msg['To'] = send_to_email
                 msg['Subject'] = subject
+# Setup the attachment
+                filename = os.path.basename(file_location)
+                attachment = open(file_location, "rb")
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(attachment.read())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
+
+                # Attach the attachment to the MIMEMultipart object
+                msg.attach(part)
+
+                server = smtplib.SMTP('smtp.gmail.com', 587)
+                server.starttls()
+                server.login(email, password)
+                text = msg.as_string()
+                server.sendmail(email, send_to_email, text)
+                server.quit()
+                speak("email has been sent to avinash")
+
+            else:                
+                email = 'your@gmail.com' # Your email
+                password = 'your_pass' # Your email account password
+                send_to_email = 'To_person@gmail.com' # Whom you are sending the message to
+                message = query # The message in the email
+
+                server = smtplib.SMTP('smtp.gmail.com', 587) # Connect to the server
+                server.starttls() # Use TLS
+                server.login(email, password) # Login to the email server
+                server.sendmail(email, send_to_email , message) # Send the email
+                server.quit() # Logout of the email server
+                speak("email has been sent to avinash")
+            
+
+        # speak("sir, do you have any other work")
 
                 msg.attach(MIMEText(message, 'plain'))
             
