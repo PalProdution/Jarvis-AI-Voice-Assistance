@@ -24,5 +24,80 @@ engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices');
 # print(voices[0].id)
 engine.setProperty('voices', voices[len(voices) - 1].id)
+#text to speech
+def speak(audio):
+    engine.say(audio)
+    print(audio)
+    engine.runAndWait()
+
+
+#To convert voice into text
+def  takecommand():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("listening...")
+        r.pause_threshold = 1
+        audio = r.listen(source,timeout=5,phrase_time_limit=8)
+
+    try:
+        print("Recognizing...")
+        query = r.recognize_google(audio, language='en-in')
+        print(f"user said: {query}")
+
+    except Exception as e:
+        speak("Say that again please...")
+        return "none"
+    return query
+
+#to wish
+def wish():
+    hour = int(datetime.datetime.now().hour)
+    tt = time.strftime("%I:%M %p")
+
+    if hour >= 0 and hour <= 12:
+        speak(f"good morning, its {tt}")
+    elif hour >= 12 and hour <= 18:
+        speak(f"good afternoon, its {tt}")
+    else:
+        speak(f"good evening, its {tt}")
+    speak("i am jarvis sir. please tell me how may i help you")
+
+"""    
+#to send email
+def sendEmail(to,content):
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.ehlo()
+    server.starttls()
+    server.login('YOUR EMAIL ADDRESS', 'YOUR PASSWORD')
+    server.sendmail('YOUR EMAIL ADDRESS', to, content)
+    server.close()
+ """
+ 
+ 
+
+#for news updates
+def news():
+    main_url = 'http://newsapi.org/v2/top-headlines?sources=techcrunch&apiKey="YOUR_API_HERE"'
+
+    main_page = requests.get(main_url).json()
+    # print(main_page)
+    articles = main_page["articles"]
+    # print(articles)
+    head = []
+    day=["first","second","third","fourth","fifth","sixth","seventh","eighth","ninth","tenth"]
+    for ar in articles:
+        head.append(ar["title"])
+    for i in range (len(day)):
+        # print(f"today's {day[i]} news is: ", head[i])
+        speak(f"today's {day[i]} news is: {head[i]}")
+
+
+
+if __name__ == "__main__": #main program
+    wish()
+    while True:
+    # if 1:
+
+        query = takecommand().lower()
 
 
